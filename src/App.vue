@@ -20,7 +20,12 @@
           </div>
         </div>
       </div>
+      <div class="total" v-if="calculateTotal > 0">
+        <div>Total</div>
+        <div>${{ calculateTotal }}</div>
+      </div>
     </div>
+
   </div>
 </template>
 
@@ -39,13 +44,26 @@ export default {
     }
   },
 
+  computed: {
+    calculateTotal() {
+      let total = 0
+      for (const item of this.itemList) {
+        total = total + item.quantity * item.amount
+      }
+      return total
+    }
+  },
+
+
   methods: {
     updateCart(item) {
       if (item.isSelected == false) {
         this.cartNewOrder.unshift(item)
+        item.quantity++
       } else {
         let missingItemIndex = this.cartNewOrder.findIndex((missingItem) => missingItem.name == item.name)
         this.cartNewOrder.splice(missingItemIndex, 1)
+        item.quantity = 0
       }
       item.isSelected = !item.isSelected
     },
@@ -57,9 +75,18 @@ export default {
         if (item.quantity > 0) {
           item.quantity--
         } else {
+          let missingItemIndex = this.cartNewOrder.findIndex((missingItem) => missingItem.name == item.name)
+          this.cartNewOrder.splice(missingItemIndex, 1)
           item.isSelected = false
         }
       }
+    },
+
+    removeItem(item) {
+      let missingItemIndex = this.cartNewOrder.findIndex((missingItem) => missingItem.name == item.name)
+      this.cartNewOrder.splice(missingItemIndex, 1)
+      item.isSelected = false
+      item.quantity = 0
     }
   }
 }
@@ -95,7 +122,7 @@ body {
   .cart {
     .item {
       display: flex;
-      width: 20rem;
+      width: 25rem;
 
       .item-wrap {
         display: flex;
@@ -140,6 +167,3 @@ body {
   }
 }
 </style>
-
-this.cartNewOrder.findIndex((removeItem) => removeItem.name == item.name)) let missingItemIndex = this.cartNewOrder.findIndex((removeItem) => removeItem.name == item.name))
-this.cartNewOrder.splice(missingItemIndex, 1)
